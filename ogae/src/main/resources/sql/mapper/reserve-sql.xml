@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ReserveDAO">
+	<resultMap type="hashmap" id="selectMapList">
+		<result property="reserve_idx" column="reserve_idx"/>
+		<result property="reserve_start" column="reserve_start"/>
+		<result property="guest_name" column="guest_name"/>
+		<result property="guest_phone" column="guest_phone"/>
+		<result property="guest_emerge_phone" column="guest_emerge_phone"/>
+		<result property="guest_email" column="guest_email"/>
+		<result property="room_idx" column="room_idx"/>
+	</resultMap>
+	
+	<select id="getReserList" resultType="reserve" parameterType="hashmap">
+		SELECT room_idx, reserve_start, reserve_end, reserve_state
+		FROM reserve
+		WHERE reserve_start between #{start} AND #{end}
+		AND room_idx in (SELECT room_idx FROM room WHERE room_condition = true)
+	</select>
+
+	<select id="getUseRoomList" resultType="RoomVO" parameterType="RoomVO">
+		SELECT *
+		FROM room
+	</select>
+
+	<select id="getImageList" resultType="RoomImgVO">
+		SELECT * FROM room_img
+		ORDER BY img_path ASC
+	</select>
+	
+	<select id="getImages" resultType="RoomImgVO" parameterType="RoomImgVO">
+		SELECT img_path, (SELECT room_name FROM room WHERE room_idx = #{room_idx}) room_name
+		FROM room_img
+		WHERE room_idx = #{room_idx}
+	</select>
+	
+	<insert id="insertReserve" parameterType="reserve">
+		INSERT INTO	reserve
+		VALUES (#{reserve_idx}, #{reserve_start}, #{reserve_end}, #{reserve_state}, #{room_idx}, #{guest_idx})
+	</insert>
+	
+	<select id="getReserve" resultMap="selectMapList" parameterType="hashmap">
+		SELECT r.reserve_idx, r.reserve_start, gu.guest_name, gu.guest_phone, gu.guest_emerge_phone, gu.guest_email, r.room_idx
+		FROM reserve as r JOIN guest as gu ON r.guest_idx = gu.guest_idx
+		WHERE gu.guest_name = #{guest_name} AND gu.guest_phone = #{guest_phone} AND r.reserve_idx = #{reserve_idx}
+	</select>
+	
+	<select id="getRoomInfo" resultType="RoomVO" parameterType="int">
+		SELECT room_name, room_price
+		FROM room
+		WHERE room_idx = #{value}
+	</select>
+
+</mapper>

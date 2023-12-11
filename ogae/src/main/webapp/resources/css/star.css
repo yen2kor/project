@@ -1,0 +1,48 @@
+@charset "UTF-8";
+
+/* 만족도 입력 */
+.grade {
+    height: 46px;
+    padding: 0 10px;
+    margin-right: 200px;
+    display: flex;
+    flex-direction: row-reverse;
+    float: left;
+}
+
+.grade:not(:checked) > input {
+    position:absolute;
+    top:-9999px;
+}
+.grade:not(:checked) > label {
+    width:1em;
+    overflow:hidden;
+    white-space:nowrap;
+    cursor:pointer;
+    font-size:30px;
+    color:#ccc;
+    white-space: nowrap;
+}
+.grade:not(:checked) > label:before {
+    content: '★ ';
+}
+.grade > input:checked ~ label {
+    color: #ffc700;
+}
+.grade:not(:checked) > label:hover,
+.grade:not(:checked) > label:hover ~ label {
+    color: #deb217;
+}
+.grade > input:checked + label:hover,
+.grade > input:checked + label:hover ~ label,
+.grade > input:checked ~ label:hover,
+.grade > input:checked ~ label:hover ~ label,
+.grade > label:hover ~ input:checked ~ label {
+    color: #c59b08;
+}
+
+/* 만족도 출력 */
+.star {
+    font-size: 30px;
+    color: #ffc700;
+}

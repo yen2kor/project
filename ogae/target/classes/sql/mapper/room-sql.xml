@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="RoomDAO">
+	<resultMap type="RoomVO" id="roomResult">
+		<id property="roomIdx" column="room_idx" />
+		<result property="roomName" column="room_name" />
+		<result property="room" column="room_info" />
+		<result property="roomCondition" column="room_condition" />
+		<result property="roomCategory" column="room_category" />
+		<result property="personNum" column="person_num" />
+		<result property="dogNum" column="dog_num" />
+		<result property="roomItemIdx" column="room_item_idx" />
+		<result property="roomGuide" column="room_guide" />
+		<result property="dogNum" column="roomSize" />
+		<result property="roomRegdate" column="room_regdate" />
+		<result property="roomCheckin" column="room_checkin" />
+		<result property="roomCheckout" column="room_checkout" />
+	</resultMap>
+
+	<!-- where절 공통 사용 -->
+	<sql id="search">
+		<where>
+			<if test="searchCondition == 'title'">
+				AND ROOM_TITME LIKE '%'||#{searchKeyword}||'%'
+			</if>
+			<if test="searchCondition == 'content'">
+				AND ROOM_CONTENT LIKE '%'||#{searchKeyword}||'%'
+			</if>
+			<if test="searchCondition == 'writer'">
+				AND ROOM_WRITER LIKE '%'||#{searchKeyword}||'%'
+			</if>
+		</where>
+	</sql>
+
+	<insert id="insertRoom" parameterType="RoomVO" useGeneratedKeys="true" keyProperty="room_idx">
+
+		INSERT INTO room(room_name, room_info, room_condition, room_category, person_num, dog_num, room_item_idx, room_guide, room_size,
+		room_regdate, room_checkin, room_checkout, room_price)
+		VALUES(#{room_name}, #{room_info},#{room_condition}, #{room_category}, #{person_num}, #{dog_num}, #{room_item_idx},
+		#{room_guide}, #{room_size}, current_timestamp, #{room_checkin}, #{room_checkout}, #{room_price})
+	</insert>
+
+	<update id="updateRoom" parameterType="map" useGeneratedKeys="true" keyProperty="room_idx">
+		UPDATE room
+		SET room_name = #{room_name},
+		room_info = #{room_info}, 
+		room_condition = #{room_condition},
+		room_category = #{room_category},
+		person_num = #{person_num},
+		dog_num = #{dog_num},
+		room_item_idx = #{room_item_idx},
+		room_guide = #{room_guide},
+		room_size = #{room_size},
+		room_checkin = #{room_checkin},
+		room_checkout = #{room_checkout},
+		room_price = #{room_price}
+		WHERE room_idx = #{room_idx}
+	</update>
+
+	<delete id="deleteRoom" parameterType="RoomVO">
+		DELETE FROM room
+		WHERE room_idx = #{room_idx}
+	</delete>
+
+	<select id="getRoom" resultType="RoomVO" parameterType="RoomVO" >
+		SELECT *FROM room 
+		WHERE room_idx = #{room_idx}
+	</select>
+
+	<select id="getRoomList" resultType="RoomVO" parameterType="RoomVO">
+		SELECT * FROM room
+		ORDER BY room_idx ASC
+	</select>
+	
+	<select id="getRoomImgList" resultType="RoomImgVO" parameterType="RoomImgVO">
+		SELECT * FROM room_img
+		WHERE room_idx = #{room_idx}
+	</select>
+
+<!-- 	게시글 목록 총 개수 -->
+	<select id="getRoomListCnt" resultType="int">
+		SELECT COUNT(*) as
+		listCnt FROM ROOM
+	</select>
+
+</mapper>
+
+	
+
+	
